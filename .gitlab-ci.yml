@@ -1,0 +1,49 @@
+stages:
+- build # build stage of pipeline, nothing define
+- test # test stage of pipeline, nothing define, could use something like a yaml lint to review compose file or even secret scanning to help avoid leaks in your repo
+- deploy  #build stage of pipeline
+
+image: python:3.12-slim   # includes bash & openssh-client
+
+Docker-run:
+  stage: deploy
+  tags:
+    - HomelabDemo #running pipeline with this tag, which could impact factors such as what CI runner is used.
+
+  before_script:
+    - apt-get update && apt-get install -y openssh-client   #ensuring image has the correct packages (these already exist in python:3.12, doing this to ensure configuration is as expected)
+    # Setup ssh key in memory to reduce exposure, while allowing multiple ssh connections without having to valid passphrases multiple times
+    - eval $(ssh-agent -s)
+    # Load the private key from the masked CI variable without touching the filesystem, while unpacking the base64 encoded string to avoid github whitespace issue with ssh keys. This line requires a bash image to run it.
+    - ssh-add <(echo "$SSH_GIT2LAUNCH_PRIVATE_KEY" | base64 -d)
+    # Populate known_host file for the target host avoiding disable host key checking and opening MITM attacks
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -p "${REMOTE_PORT}" "${REMOTE_HOST}" >> ~/.ssh/known_hosts
+
+  script:
+    - ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST "mkdir -p $REMOTE_PATH" #make local files, ensure file permissions for REMOTE_USER are correct
+    - scp -P $REMOTE_PORT -r DeploymentFiles/* $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH #Copy files from repo to target server
+    - ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST "docker compose -f $REMOTE_PATH/Glance-Bowl/docker-compose.yaml pull" #pull images as called out in compose file, ensure REMOTE_USER has docker access, either via rootless docker, group permissions or SUDO so it can interact with docker
+    - ssh -p $REMOTE_PORT $REMOTE_USER@$REMOTE_HOST "docker compose -f $REMOTE_PATH/Glance-Bowl/docker-compose.yaml up -d --force-recreate" #start containers as called out in the compose file, forcing a recreate if needed
+
+  variables: # variables: #set and hidden in GITLAB UI, for this demo REMOTE_PATH and REMOTE_USER are same for prod and test
+  rules:
+    # based on commit branch, setting different variable. In particular this changes what the target server is, test branches deploy to test environment and main goes into production.
+    # Production (main / master)
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"'
+      variables:
+        ENVIRONMENT: "prod"
+        REMOTE_HOST: "$PROD_REMOTE_HOST"
+        REMOTE_PORT: "$PROD_REMOTE_PORT"
+      when: on_success
+
+    # Explicit test branch
+    - if: '$CI_COMMIT_BRANCH == "test"'
+      variables:
+        ENVIRONMENT: "test"
+        REMOTE_HOST: "$TEST_REMOTE_HOST"
+        REMOTE_PORT: "$TEST_REMOTE_PORT"
+      when: on_success
+
+    #will skip job if in any other branch
+    - when: never 
