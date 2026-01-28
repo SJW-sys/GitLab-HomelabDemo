@@ -70,11 +70,11 @@ You can even use docker itself to run your runner, however their are some added 
 
  D) Navigate back and into the group, "HomelabDemoGroup". Open "build" drop down, click "Runners". Click "Create group runner".
 
-    The most important thing to set here, is tags; if the tags noted here, match the tags in a pipeline, this runner is then eligible to run your pipeline. We will use "HomelabDemo" as a tag. After these are filled in, you can leave everything else blank.
+ The most important thing to set here, is tags; if the tags noted here, match the tags in a pipeline, this runner is then eligible to run your pipeline. We will use "HomelabDemo" as a tag. After these are filled in, you can leave everything else blank.
 
  E) Take the gitlab-runner register command below, and run that on your gitlab-runner server as root/sudo. Command will look like this:
 
-    `sudo gitlab-runner register  --url URL --token TOKEN`
+`sudo gitlab-runner register  --url URL --token TOKEN`
 
  F) You will get asked to name your server (you can leave it blank and it will default). Then you will ask for a "executor type". For this deployment we will be choosing "Docker", with using the default image as "python:3.12-slim".
 
