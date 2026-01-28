@@ -1,0 +1,38 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:${IMAGE_TAG:-latest}
+    container_name: gitlab
+    hostname: "$GITLAB_HOSTNAME"
+    restart: unless-stopped
+    environment:
+      # First time login credential, always recommend changing any first login information.
+      GITLAB_ROOT_EMAIL: "$GITLAB_ROOT_EMAIL"
+      GITLAB_ROOT_PASSWORD: "$GITLAB_ROOT_PASSWORD"
+      # Add any other gitlab.rb configuration here, each on its own line, it will overwrite gitlabs config file 
+      # the below four settings config for a  NPM or caddy reverse proxy in front of server, nginx should be on by default, but being explicit
+      # The below port is the port that npm needs to point towards
+      # gitlab_rails[‘gitlab_shell_ssh_port’] = 2222
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://$GITLAB_URL/'
+        letsencrypt['enabled'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+    ports:
+      - '4080:80'
+      - '4443:443'
+      - '4022:22'
+    volumes:
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      - CaddyProxyNet
+    env_file:
+      - stack.env
+
+networks:
+  CaddyProxyNet:
+    name: CaddyProxyNet
+    driver: bridge
+    external: true
