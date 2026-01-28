@@ -62,23 +62,23 @@ You can even use docker itself to run your runner, however their are some added 
 
 **Important** - You can either run the registration tool, or manually fill out the toml config file. I had issues with the registration tool (ran it as non-root initially), so I had to go the config file route. It did allow additional settings outside the scope of this demo to be set easily. I have provided an example of my config you could use (ExampleFiles/config.toml). Just get the token you will generate in at the end of step D, to use in the file and correct the FIXME with your environment information. Be sure to set it at /etc/gitlab-runner/config.toml.
 
-    A) Open gitlab instance, and decided if you want the runner to run at the instance, group or project level. The steps are relatively the same, but we will be demoing how to setup for a group.
+ A) Open gitlab instance, and decided if you want the runner to run at the instance, group or project level. The steps are relatively the same, but we will be demoing how to setup for a group.
 
-    B)  Go to "groups" on the left hand size, click. Then click "New Group" on the top right. Select "new group"
+ B)  Go to "groups" on the left hand size, click. Then click "New Group" on the top right. Select "new group"
 
-    C) Create a group to preferences, we will refer to it as "HomelabDemoGroup"
+ C) Create a group to preferences, we will refer to it as "HomelabDemoGroup"
 
-    D) Navigate back and into the group, "HomelabDemoGroup". Open "build" drop down, click "Runners". Click "Create group runner".
+ D) Navigate back and into the group, "HomelabDemoGroup". Open "build" drop down, click "Runners". Click "Create group runner".
 
     The most important thing to set here, is tags; if the tags noted here, match the tags in a pipeline, this runner is then eligible to run your pipeline. We will use "HomelabDemo" as a tag. After these are filled in, you can leave everything else blank.
 
-    E) Take the gitlab-runner register command below, and run that on your gitlab-runner server as root/sudo. Command will look like this:
+ E) Take the gitlab-runner register command below, and run that on your gitlab-runner server as root/sudo. Command will look like this:
 
     `sudo gitlab-runner register  --url URL --token TOKEN`
 
-    F) You will get asked to name your server (you can leave it blank and it will default). Then you will ask for a "executor type". For this deployment we will be choosing "Docker", with using the default image as "python:3.12-slim".
+ F) You will get asked to name your server (you can leave it blank and it will default). Then you will ask for a "executor type". For this deployment we will be choosing "Docker", with using the default image as "python:3.12-slim".
 
-    Executor Type is HOW your gitlab-runner executes pipelines. Ie. "shell" will use the host system of the gitlab-runner to execute the commands. "Docker" will pull and run a docker container to execute the jobs within. "Kubernetes", spins up a pod for the job to execute.
+ Executor Type is HOW your gitlab-runner executes pipelines. Ie. "shell" will use the host system of the gitlab-runner to execute the commands. "Docker" will pull and run a docker container to execute the jobs within. "Kubernetes", spins up a pod for the job to execute.
 
 6) start and enable via systemd or distro init controller:
 
@@ -155,6 +155,7 @@ On target host we are going to take the extra steps to have ssh setup via a dedi
     `sudo -u gitlab-runner docker info`
 
 5) Make sure ssh is setup for the user and permissions are correct.
+
     `sudo mkdir -p /home/gitrunner/.ssh
     sudo touch /home/gitrunner/.ssh/authorizedkeys
     sudo chown gitrunner:gitrunner --recursive /home/gitrunner
