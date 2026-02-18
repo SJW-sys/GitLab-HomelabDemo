@@ -156,12 +156,12 @@ On target host we are going to take the extra steps to have ssh setup via a dedi
 
 5) Make sure ssh is setup for the user and permissions are correct.
 
-    `sudo mkdir -p /home/gitrunner/.ssh
-    sudo touch /home/gitrunner/.ssh/authorizedkeys
-    sudo chown gitrunner:gitrunner --recursive /home/gitrunner
-    sudo chmod --recursive 700 /home/gitrunner
-    sudo chmod 600 /home/gitrunner/.ssh/authorized_keys
-    sudo vim /home/gitrunner/.ssh/authorized_keys ## add .pub key of gitrunner agent server private ssh key we generated earlier.`
+    `sudo mkdir -p /home/gitrunner/.ssh`
+    `sudo touch /home/gitrunner/.ssh/authorizedkeys`
+    `sudo chown gitrunner:gitrunner --recursive /home/gitrunner`
+    `sudo chmod --recursive 700 /home/gitrunner`
+    `sudo chmod 600 /home/gitrunner/.ssh/authorized_keys`
+    `sudo vim /home/gitrunner/.ssh/authorized_keys ## add .pub key of gitrunner agent server private ssh key we generated earlier.`
 
 ### Final setup
 
