@@ -123,11 +123,11 @@ Key(name): SSH_HOMELABDEMO_PRIVATE_KEY (if you change this, be sure to modify th
 For best practice you would want to select the visibility level of "Masked and hidden" for something as sensitive as a ssh key. The most important part of this is in the "value" field, putting your priv key you generated here that was encoded via base64. Everything else you can leave default or set to your needs.
 
 7) I have provided a pipeline variable file (ExampleFiles/.gitlab-ci.yml), add this to any repositories root, and as long as the below variables are set at a level the pipeline can reference it will run successfully. More details are comments in the pipeline file. **Notice the tags might be different from what you set your pipeline to run, make sure these match.**
-> REMOTE_PORT - ssh port to connect to
-> PROD_REMOTE_USER - ssh user to connect to your prod server, our demo this is: gitrunner
-> PROD_REMOTE_HOST - your prod target server of the pipeline
-> TEST_REMOTE_USER - ssh user to connect to your test server.
-> TEST_REMOTE_HOST - your test target server of the pipeline
+> REMOTE_PORT - ssh port to connect to.</br>
+> PROD_REMOTE_USER - ssh user to connect to your prod server, our demo this is: gitrunner.</br>
+> PROD_REMOTE_HOST - your prod target server of the pipeline.</br>
+> TEST_REMOTE_USER - ssh user to connect to your test server.</br>
+> TEST_REMOTE_HOST - your test target server of the pipeline.</br>
 
 Please note, I have my pipeline setup to target a different server (another set of REMOTE_HOST REMOTE_PORT ) based on the branch name (CI_COMMIT_BRANCH) it was pushed to (main/master or test). That way you could have a test sever you can check you pushes on, before committing to main. Gitlab is smart enough that it sets CI_COMMIT_BRANCH automatically based on the branch name when running a pipeline.
 
