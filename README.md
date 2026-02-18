@@ -82,8 +82,8 @@ You can even use docker itself to run your runner, however their are some added 
 
 6) start and enable via systemd or distro init controller:
 
-    `sudo systemctl enable gitlab-runner
-    sudo systemctl start gitlab-runner`
+    `sudo systemctl enable gitlab-runner`</br>
+    `sudo systemctl start gitlab-runner`
 
 7) check gitlab-runner is enabled:
     
@@ -123,11 +123,11 @@ Key(name): SSH_HOMELABDEMO_PRIVATE_KEY (if you change this, be sure to modify th
 For best practice you would want to select the visibility level of "Masked and hidden" for something as sensitive as a ssh key. The most important part of this is in the "value" field, putting your priv key you generated here that was encoded via base64. Everything else you can leave default or set to your needs.
 
 7) I have provided a pipeline variable file (ExampleFiles/.gitlab-ci.yml), add this to any repositories root, and as long as the below variables are set at a level the pipeline can reference it will run successfully. More details are comments in the pipeline file. **Notice the tags might be different from what you set your pipeline to run, make sure these match.**
-    REMOTE_PORT - ssh port to connect to
-    PROD_REMOTE_USER - ssh user to connect to your prod server, our demo this is: gitrunner
-    PROD_REMOTE_HOST - your prod target server of the pipeline
-    TEST_REMOTE_USER - ssh user to connect to your test server.
-    TEST_REMOTE_HOST - your test target server of the pipeline
+> REMOTE_PORT - ssh port to connect to
+> PROD_REMOTE_USER - ssh user to connect to your prod server, our demo this is: gitrunner
+> PROD_REMOTE_HOST - your prod target server of the pipeline
+> TEST_REMOTE_USER - ssh user to connect to your test server.
+> TEST_REMOTE_HOST - your test target server of the pipeline
 
 Please note, I have my pipeline setup to target a different server (another set of REMOTE_HOST REMOTE_PORT ) based on the branch name (CI_COMMIT_BRANCH) it was pushed to (main/master or test). That way you could have a test sever you can check you pushes on, before committing to main. Gitlab is smart enough that it sets CI_COMMIT_BRANCH automatically based on the branch name when running a pipeline.
 
@@ -161,7 +161,9 @@ On target host we are going to take the extra steps to have ssh setup via a dedi
     `sudo chown gitrunner:gitrunner --recursive /home/gitrunner`</br>
     `sudo chmod --recursive 700 /home/gitrunner`</br>
     `sudo chmod 600 /home/gitrunner/.ssh/authorized_keys`</br>
-    `sudo vim /home/gitrunner/.ssh/authorized_keys ## add .pub key of gitrunner agent server private ssh key we generated earlier.`
+    `sudo vim /home/gitrunner/.ssh/authorized_keys`
+    
+    add .pub key of gitrunner agent server private ssh key we generated earlier.
 
 ### Final setup
 
